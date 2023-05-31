@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import PlanetContext from './AppContext';
+import { PlanetContext } from './AppContext';
 
 const URL_API = 'https://swapi.dev/api/planets';
 
 function PlanetProvider({ children }) {
   const [isFetching, setIsFetching] = useState(false);
   const [errorMessage, setErrorMessage] = useState('Falha na requisição');
-  const [planetsAPI, setPlanetsAPI] = useState([]);
+  const [dataAPI, setdataAPI] = useState([]);
 
   const fetchAPI = useCallback(async (url) => {
     try {
@@ -21,7 +21,7 @@ function PlanetProvider({ children }) {
           delete planetResult.residents;
           return planetResult;
         });
-      setPlanetsAPI((filterDataAPI));
+      setdataAPI((filterDataAPI));
     } catch (e) {
       setErrorMessage('Falha na requisição');
       throw new Error(errorMessage);
@@ -34,16 +34,13 @@ function PlanetProvider({ children }) {
     fetchAPI(URL_API);
   }, [fetchAPI]);
 
-  const context = useMemo(() => ({
+  const values = useMemo(() => ({
     isFetching,
-    planetsAPI,
-  }), [
-    isFetching,
-    planetsAPI,
-  ]);
+    dataAPI,
+  }), [isFetching, dataAPI]);
 
   return (
-    <PlanetContext.Provider value={ context }>
+    <PlanetContext.Provider value={ values }>
       {children}
     </PlanetContext.Provider>
   );

@@ -1,13 +1,17 @@
 import React, { useContext } from 'react';
-import PlanetContext from '../context/AppContext';
+import { PlanetContext, FilterContext } from '../context/AppContext';
 
 function Table() {
-  const { planetsAPI } = useContext(PlanetContext);
+  const { dataAPI } = useContext(PlanetContext);
+  const { formData } = useContext(FilterContext);
 
-  console.log(planetsAPI);
+  const { planetName } = formData;
+
+  const filterTable = dataAPI
+    .filter((planet) => planet.name.toLowerCase().includes(planetName.toLowerCase()));
+
   return (
     <main>
-      A wizard is never late
       <table>
         <thead>
           <tr>
@@ -28,7 +32,7 @@ function Table() {
         </thead>
 
         <tbody>
-          {planetsAPI.map((planet, index) => (
+          {filterTable.map((planet, index) => (
             <tr key={ index }>
               <td>{planet.name}</td>
               <td>{planet.rotation_period}</td>

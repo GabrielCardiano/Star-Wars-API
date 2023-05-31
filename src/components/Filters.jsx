@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import { FilterContext } from '../context/AppContext';
 
+import '../styles/Filter.css';
+
 function Filters() {
   const { formData, setFormData } = useContext(FilterContext);
   const { planetName } = formData;
@@ -10,6 +12,7 @@ function Filters() {
       <h1> A wizard is never late</h1>
 
       <input
+        className="planetName"
         type="text"
         name="planetName"
         value={ planetName }

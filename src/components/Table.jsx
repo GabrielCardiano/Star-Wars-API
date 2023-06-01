@@ -2,14 +2,17 @@ import React, { useContext } from 'react';
 import { PlanetContext, FilterContext } from '../context/AppContext';
 
 function Table() {
-  const { tableData } = useContext(PlanetContext);
+  const { tableData, errorMessage } = useContext(PlanetContext);
   const { planetName } = useContext(FilterContext);
 
   const filterTable = tableData
     .filter((planet) => planet.name.toLowerCase().includes(planetName.toLowerCase()));
 
+  if (errorMessage) return <h2>{errorMessage}</h2>;
+
   return (
     <main>
+
       <table>
         <thead>
           <tr>

@@ -22,7 +22,7 @@ function Filters() {
   return (
     <>
       <header>
-        <h1> A wizard is never late</h1>
+        <h1>Star Wars</h1>
 
         <input
           className="planetName"
@@ -93,7 +93,6 @@ function Filters() {
           onClick={ () => filterTable(tableData, formFilters) }
         >
           Filtrar
-
         </button>
       </form>
     </>

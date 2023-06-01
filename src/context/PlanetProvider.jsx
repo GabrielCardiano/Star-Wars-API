@@ -7,7 +7,7 @@ const URL_API = 'https://swapi.dev/api/planets';
 function PlanetProvider({ children }) {
   const [isFetching, setIsFetching] = useState(false);
   const [errorMessage, setErrorMessage] = useState('Falha na requisição');
-  const [dataAPI, setdataAPI] = useState([]);
+  const [tableData, setTableData] = useState([]);
 
   const fetchAPI = useCallback(async (url) => {
     try {
@@ -21,7 +21,7 @@ function PlanetProvider({ children }) {
           delete planetResult.residents;
           return planetResult;
         });
-      setdataAPI((filterDataAPI));
+      setTableData((filterDataAPI));
     } catch (e) {
       setErrorMessage('Falha na requisição');
       throw new Error(errorMessage);
@@ -36,8 +36,9 @@ function PlanetProvider({ children }) {
 
   const values = useMemo(() => ({
     isFetching,
-    dataAPI,
-  }), [isFetching, dataAPI]);
+    tableData,
+    setTableData,
+  }), [isFetching, tableData, setTableData]);
 
   return (
     <PlanetContext.Provider value={ values }>

@@ -2,12 +2,10 @@ import React, { useContext } from 'react';
 import { PlanetContext, FilterContext } from '../context/AppContext';
 
 function Table() {
-  const { dataAPI } = useContext(PlanetContext);
-  const { formData } = useContext(FilterContext);
+  const { tableData } = useContext(PlanetContext);
+  const { planetName } = useContext(FilterContext);
 
-  const { planetName } = formData;
-
-  const filterTable = dataAPI
+  const filterTable = tableData
     .filter((planet) => planet.name.toLowerCase().includes(planetName.toLowerCase()));
 
   return (

@@ -36,68 +36,65 @@ function Filters() {
       </header>
 
       <form className="formFilters">
-        <fieldset>
-          <legend>Filters</legend>
 
-          <label>
-            Coluna
-            <select
-              name="columnFilter"
-              value={ columnFilter }
-              onChange={ saveInputInState }
-              data-testid="column-filter"
-            >
-              {columnOptions.map((option, index) => (
-                <option
-                  key={ index }
-                  value={ option }
-                  className="option"
-                >
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label>
-            Operador
-            <select
-              name="comparisonFilter"
-              value={ comparisonFilter }
-              onChange={ saveInputInState }
-              data-testid="comparison-filter"
-            >
-              {comparisonOptions.map((option, index) => (
-                <option
-                  key={ index }
-                  className="option"
-                >
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <input
-            type="number"
-            name="valueFilter"
-            value={ valueFilter }
-            placeholder="Select value..."
-            data-testid="value-filter"
+        <label>
+          Coluna
+          <select
+            name="columnFilter"
+            value={ columnFilter }
             onChange={ saveInputInState }
-          />
-
-          <button
-            type="button"
-            data-testid="button-filter"
-            className="formButton"
-            onClick={ () => filterTable(tableData, formFilters) }
+            data-testid="column-filter"
           >
-            Filtrar
+            {columnOptions.map((option, index) => (
+              <option
+                key={ index }
+                value={ option }
+                className="option"
+              >
+                {option}
+              </option>
+            ))}
+          </select>
+        </label>
 
-          </button>
+        <label>
+          Operador
+          <select
+            name="comparisonFilter"
+            value={ comparisonFilter }
+            onChange={ saveInputInState }
+            data-testid="comparison-filter"
+          >
+            {comparisonOptions.map((option, index) => (
+              <option
+                key={ index }
+                className="option"
+              >
+                {option}
+              </option>
+            ))}
+          </select>
+        </label>
 
-        </fieldset>
+        <input
+          type="number"
+          name="valueFilter"
+          value={ valueFilter }
+          placeholder="Select value..."
+          data-testid="value-filter"
+          onChange={ saveInputInState }
+          className="valueFilter"
+        />
+
+        <button
+          type="button"
+          data-testid="button-filter"
+          className="formButton"
+          onClick={ () => filterTable(tableData, formFilters) }
+        >
+          Filtrar
+
+        </button>
       </form>
     </>
   );

@@ -110,6 +110,12 @@ function Filters() {
               ${tag.comparisonFilter} -
               ${tag.valueFilter}`}
               </span>
+
+              <button
+                data-testid="filter"
+              >
+                Excluir
+              </button>
             </div>
           ))
         }

@@ -26,7 +26,7 @@ header {
 }
 
 label {
-  align-items: start;
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
   height: 42px;
@@ -48,4 +48,18 @@ select {
   border: 3px solid yellow;
   font-size: 18px;
   padding: 10px;
+}
+
+.tagSection {
+  align-items: center;
+  display: flex;
+  font-size: 18px;
+  gap: 14px;
+}
+
+.tag {
+  box-shadow: 1px 1px 5px;
+  display: flex;
+  gap: 5px;
+  padding: 0 5px;
 }

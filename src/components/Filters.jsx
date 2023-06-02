@@ -14,7 +14,6 @@ function Filters() {
     columnOptions,
     removeColumnOptions,
     activeFilters,
-    saveActiveFilters,
   } = useContext(FilterContext);
 
   const { columnFilter, comparisonFilter, valueFilter } = formFilters;
@@ -70,6 +69,7 @@ function Filters() {
             {comparisonOptions.map((option, index) => (
               <option
                 key={ index }
+                value={ option }
                 className="option"
               >
                 {option}
@@ -95,7 +95,6 @@ function Filters() {
           onClick={ () => {
             filterTable(tableData, formFilters);
             removeColumnOptions(columnFilter);
-            saveActiveFilters(formFilters);
           } }
         >
           Filtrar

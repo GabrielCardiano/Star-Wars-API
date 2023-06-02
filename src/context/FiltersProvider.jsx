@@ -43,10 +43,14 @@ function FiltersProvider({ children }) {
 
   const saveActiveFilters = useCallback((filtersObj) => {
     setActiveFilters((prevFilters) => [...prevFilters, filtersObj]);
+
+    setFormFilters(initialState);
   }, []);
 
   const removeColumnOptions = useCallback((columnFilter) => {
     const updateColumnOptions = columnOptions.filter((option) => option !== columnFilter);
+
+    console.log(updateColumnOptions);
 
     setColumnOptions(updateColumnOptions);
   }, [columnOptions]);
@@ -73,7 +77,7 @@ function FiltersProvider({ children }) {
         .filter((elem) => Number((elem[columnFilter])) === Number(valueFilter));
       setTableData(filterDataTable);
     }
-  }, [setTableData]);
+  }, [setTableData, saveActiveFilters]);
 
   const values = useMemo(() => ({
     planetName,

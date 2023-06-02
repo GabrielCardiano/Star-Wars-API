@@ -1,12 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PlanetContext, FilterContext } from '../context/AppContext';
 
 function Table() {
   const { tableData, errorMessage } = useContext(PlanetContext);
   const { planetName } = useContext(FilterContext);
 
-  const filterTable = tableData
-    .filter((planet) => planet.name.toLowerCase().includes(planetName.toLowerCase()));
+  const [table, setTable] = useState([]);
+
+  useEffect(() => {
+    const filterTable = tableData
+      .filter((planet) => planet.name.toLowerCase().includes(planetName.toLowerCase()));
+    setTable(filterTable);
+  }, [tableData, planetName]);
 
   if (errorMessage) return <h2>{errorMessage}</h2>;
 
@@ -33,7 +38,7 @@ function Table() {
         </thead>
 
         <tbody>
-          {filterTable.map((planet, index) => (
+          {table.map((planet, index) => (
             <tr key={ index }>
               <td>{planet.name}</td>
               <td>{planet.rotation_period}</td>

@@ -6,6 +6,9 @@ const MAIOR_QUE = 'maior que';
 const MENOR_QUE = 'menor que';
 const IGUAL_A = 'igual a';
 
+const initialOptions = ['population',
+  'orbital_period', 'diameter', 'rotation_period', 'surface_water'];
+
 const initialState = {
   columnFilter: 'population',
   comparisonFilter: 'maior que',
@@ -15,6 +18,8 @@ const initialState = {
 function FiltersProvider({ children }) {
   const [planetName, setPlanetName] = useState('');
   const [formFilters, setFormFilters] = useState(initialState);
+  const [activeFilters, setActiveFilters] = useState([]);
+  const [columnOptions, setColumnOptions] = useState(initialOptions);
 
   const { setTableData } = useContext(PlanetContext);
 
@@ -36,10 +41,20 @@ function FiltersProvider({ children }) {
     }
   }, [formFilters]);
 
+  const saveActiveFilters = useCallback((filtersObj) => {
+    setActiveFilters((prevFilters) => [...prevFilters, filtersObj]);
+  }, []);
+
+  const removeColumnOptions = useCallback((columnFilter) => {
+    const updateColumnOptions = columnOptions.filter((option) => option !== columnFilter);
+
+    setColumnOptions(updateColumnOptions);
+  }, [columnOptions]);
+
   const filterTable = useCallback((table, filtersObj) => {
     const { columnFilter, comparisonFilter, valueFilter } = filtersObj;
 
-    console.log(filtersObj);
+    saveActiveFilters(filtersObj);
 
     if (comparisonFilter === MAIOR_QUE) {
       const filterDataTable = table
@@ -67,6 +82,10 @@ function FiltersProvider({ children }) {
     setFormFilters,
     saveInputInState,
     filterTable,
+    activeFilters,
+    saveActiveFilters,
+    columnOptions,
+    removeColumnOptions,
   }), [
     planetName,
     setPlanetName,
@@ -74,6 +93,10 @@ function FiltersProvider({ children }) {
     setFormFilters,
     saveInputInState,
     filterTable,
+    activeFilters,
+    saveActiveFilters,
+    columnOptions,
+    removeColumnOptions,
   ]);
 
   return (

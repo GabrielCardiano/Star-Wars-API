@@ -3,8 +3,6 @@ import { FilterContext, PlanetContext } from '../context/AppContext';
 
 import '../styles/Filter.css';
 
-const columnOptions = ['population',
-  'orbital_period', 'diameter', 'rotation_period', 'surface_water'];
 const comparisonOptions = ['maior que', 'menor que', 'igual a'];
 
 function Filters() {
@@ -13,6 +11,10 @@ function Filters() {
     formFilters,
     saveInputInState,
     filterTable,
+    columnOptions,
+    removeColumnOptions,
+    activeFilters,
+    saveActiveFilters,
   } = useContext(FilterContext);
 
   const { columnFilter, comparisonFilter, valueFilter } = formFilters;
@@ -90,11 +92,29 @@ function Filters() {
           type="button"
           data-testid="button-filter"
           className="formButton"
-          onClick={ () => filterTable(tableData, formFilters) }
+          onClick={ () => {
+            filterTable(tableData, formFilters);
+            removeColumnOptions(columnFilter);
+            saveActiveFilters(formFilters);
+          } }
         >
           Filtrar
         </button>
       </form>
+
+      <section className="tagSection">
+        {
+          activeFilters && activeFilters.map((tag, index) => (
+            <div key={ index } className="tag">
+              <span>
+                {`${tag.columnFilter} 
+              ${tag.comparisonFilter} -
+              ${tag.valueFilter}`}
+              </span>
+            </div>
+          ))
+        }
+      </section>
     </>
   );
 }

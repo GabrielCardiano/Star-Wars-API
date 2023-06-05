@@ -21,7 +21,7 @@ function FiltersProvider({ children }) {
   const [activeFilters, setActiveFilters] = useState([]);
   const [columnOptions, setColumnOptions] = useState(initialOptions);
 
-  const { setTableData } = useContext(PlanetContext);
+  const { tableData, setTableData, originalData } = useContext(PlanetContext);
 
   const saveInputInState = useCallback(({ target }) => {
     switch (target.name) {
@@ -50,34 +50,69 @@ function FiltersProvider({ children }) {
   const removeColumnOptions = useCallback((columnFilter) => {
     const updateColumnOptions = columnOptions.filter((option) => option !== columnFilter);
 
-    console.log(updateColumnOptions);
-
     setColumnOptions(updateColumnOptions);
   }, [columnOptions]);
 
   const filterTable = useCallback((table, filtersObj) => {
     const { columnFilter, comparisonFilter, valueFilter } = filtersObj;
 
-    saveActiveFilters(filtersObj);
-
     if (comparisonFilter === MAIOR_QUE) {
       const filterDataTable = table
         .filter((elem) => Number((elem[columnFilter])) > Number(valueFilter));
-      setTableData(filterDataTable);
+      return setTableData(filterDataTable);
     }
 
     if (comparisonFilter === MENOR_QUE) {
       const filterDataTable = table
         .filter((elem) => Number((elem[columnFilter])) < Number(valueFilter));
-      setTableData(filterDataTable);
+      return setTableData(filterDataTable);
     }
 
     if (comparisonFilter === IGUAL_A) {
       const filterDataTable = table
         .filter((elem) => Number((elem[columnFilter])) === Number(valueFilter));
-      setTableData(filterDataTable);
+      return setTableData(filterDataTable);
     }
-  }, [setTableData, saveActiveFilters]);
+  }, [setTableData]);
+
+  const newTable = useCallback((originalTable, newFiltersArray) => {
+    // console.log(originalTable);
+    // console.log(newFiltersArray);
+    let updatedTable = [...originalTable];
+    newFiltersArray.forEach((filter) => {
+      const { columnFilter, comparisonFilter, valueFilter } = filter;
+      if (comparisonFilter === MAIOR_QUE) {
+        updatedTable = originalTable
+          .filter((elem) => Number((elem[columnFilter])) > Number(valueFilter));
+        setTableData(updatedTable);
+      } else if (comparisonFilter === MENOR_QUE) {
+        updatedTable = originalTable
+          .filter((elem) => Number((elem[columnFilter])) < Number(valueFilter));
+        setTableData(updatedTable);
+      } else if (comparisonFilter === IGUAL_A) {
+        updatedTable = originalTable
+          .filter((elem) => Number((elem[columnFilter])) === Number(valueFilter));
+        setTableData(updatedTable);
+      }
+    });
+    setTableData(updatedTable);
+  }, [setTableData]);
+
+  const removeFilter = useCallback((filterTag) => {
+    const updateActiveFilters = activeFilters
+      .filter((tag) => tag.columnFilter !== filterTag.columnFilter);
+
+    setActiveFilters(updateActiveFilters);
+    setColumnOptions([...columnOptions, filterTag.columnFilter]);
+
+    newTable(originalData, updateActiveFilters);
+  }, [activeFilters, columnOptions, originalData, newTable]);
+
+  const removeAllFilters = useCallback(() => {
+    setActiveFilters([]);
+
+    newTable(originalData, []);
+  }, [newTable, originalData]);
 
   const values = useMemo(() => ({
     planetName,
@@ -90,6 +125,8 @@ function FiltersProvider({ children }) {
     saveActiveFilters,
     columnOptions,
     removeColumnOptions,
+    removeFilter,
+    removeAllFilters,
   }), [
     planetName,
     setPlanetName,
@@ -101,6 +138,8 @@ function FiltersProvider({ children }) {
     saveActiveFilters,
     columnOptions,
     removeColumnOptions,
+    removeFilter,
+    removeAllFilters,
   ]);
 
   return (

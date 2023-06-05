@@ -8,6 +8,7 @@ function PlanetProvider({ children }) {
   const [isFetching, setIsFetching] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [tableData, setTableData] = useState([]);
+  const [originalData, SetOriginalData] = useState([]);
 
   const fetchAPI = useCallback(async (url) => {
     try {
@@ -22,6 +23,7 @@ function PlanetProvider({ children }) {
           return planetResult;
         });
       setTableData((filterDataAPI));
+      SetOriginalData((filterDataAPI));
     } catch (e) {
       setErrorMessage('Falha na requisição da API');
       throw new Error(errorMessage);
@@ -39,7 +41,8 @@ function PlanetProvider({ children }) {
     tableData,
     setTableData,
     errorMessage,
-  }), [isFetching, tableData, setTableData, errorMessage]);
+    originalData,
+  }), [isFetching, tableData, setTableData, errorMessage, originalData]);
 
   return (
     <PlanetContext.Provider value={ values }>

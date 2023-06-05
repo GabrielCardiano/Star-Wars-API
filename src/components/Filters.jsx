@@ -14,6 +14,9 @@ function Filters() {
     columnOptions,
     removeColumnOptions,
     activeFilters,
+    removeFilter,
+    saveActiveFilters,
+    removeAllFilters,
   } = useContext(FilterContext);
 
   const { columnFilter, comparisonFilter, valueFilter } = formFilters;
@@ -93,18 +96,29 @@ function Filters() {
           data-testid="button-filter"
           className="formButton"
           onClick={ () => {
+            saveActiveFilters(formFilters);
             filterTable(tableData, formFilters);
             removeColumnOptions(columnFilter);
           } }
         >
           Filtrar
         </button>
+
+        <button
+          type="button"
+          className="formButton"
+          data-testid="button-remove-filters"
+          onClick={ removeAllFilters }
+        >
+          Remover todas filtragens
+
+        </button>
       </form>
 
       <section className="tagSection">
         {
           activeFilters && activeFilters.map((tag, index) => (
-            <div key={ index } className="tag">
+            <div key={ index } className="tag" data-testid="filter">
               <span>
                 {`${tag.columnFilter} 
               ${tag.comparisonFilter} -
@@ -112,7 +126,8 @@ function Filters() {
               </span>
 
               <button
-                data-testid="filter"
+                type="button"
+                onClick={ () => removeFilter(tag) }
               >
                 Excluir
               </button>

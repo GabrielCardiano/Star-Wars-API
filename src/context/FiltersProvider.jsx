@@ -21,7 +21,7 @@ function FiltersProvider({ children }) {
   const [activeFilters, setActiveFilters] = useState([]);
   const [columnOptions, setColumnOptions] = useState(initialOptions);
 
-  const { tableData, setTableData, originalData } = useContext(PlanetContext);
+  const { setTableData, originalData } = useContext(PlanetContext);
 
   const saveInputInState = useCallback(({ target }) => {
     switch (target.name) {

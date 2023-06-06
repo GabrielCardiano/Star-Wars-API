@@ -26,11 +26,11 @@ function PlanetProvider({ children }) {
       SetOriginalData((filterDataAPI));
     } catch (e) {
       setErrorMessage('Falha na requisição da API');
-      throw new Error(errorMessage);
+      // throw new Error('Falha na requisição da API');
     } finally {
       setIsFetching(false);
     }
-  }, [errorMessage]);
+  }, []);
 
   useEffect(() => {
     fetchAPI(URL_API);

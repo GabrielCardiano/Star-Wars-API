@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { queryAllByRole, render, screen, waitFor } from '@testing-library/react';
 import FiltersProvider from '../context/FiltersProvider';
 import PlanetProvider from '../context/PlanetProvider';
 import App from '../App';
@@ -109,10 +109,19 @@ describe('Testa a aplicação Star Wars', () => {
     const valueFilter = screen.getByRole('spinbutton');
     expect(valueFilter).toBeInTheDocument();
 
+    const filterBtn = screen.getByRole('button', {  name: /filtrar/i})
+
     act(() => {
       userEvent.selectOptions(columnFilters, 'orbital_period');
       userEvent.selectOptions(comparisonFilter, 'maior que');
-      userEvent.type(valueFilter, 500);      
+      userEvent.clear(valueFilter)
+      userEvent.type(valueFilter, 500);
+      userEvent.click(filterBtn)
+    })
+
+    await waitFor(() => {
+      expect(screen.getByRole('cell', {  name: /yavin/i})).toBeInTheDocument();
+      expect(screen.queryByText('Endor')).toBeInTheDocument();
     })
   });
 
@@ -134,10 +143,14 @@ describe('Testa a aplicação Star Wars', () => {
     const valueFilter = screen.getByRole('spinbutton');
     expect(valueFilter).toBeInTheDocument();
 
+    const filterBtn = screen.getByRole('button', {  name: /filtrar/i})
+
     act(() => {
       userEvent.selectOptions(columnFilters, 'orbital_period');
       userEvent.selectOptions(comparisonFilter, 'menor que');
+      userEvent.clear(valueFilter)
       userEvent.type(valueFilter, 500);
+      userEvent.click(filterBtn)     
     });
     
   });
@@ -160,16 +173,128 @@ describe('Testa a aplicação Star Wars', () => {
     const valueFilter = screen.getByRole('spinbutton');
     expect(valueFilter).toBeInTheDocument();
 
+    const filterBtn = screen.getByRole('button', {  name: /filtrar/i})
+
     act(() => {
       userEvent.selectOptions(columnFilters, 'orbital_period');
       userEvent.selectOptions(comparisonFilter, 'igual a');
+      userEvent.clear(valueFilter)
       userEvent.type(valueFilter, 402);
+      userEvent.click(filterBtn)
     });
 
    await waitFor(() => {
-      expect(screen.getByRole('cell', {  name: /endor/i})).toBeInTheDocument()
+      expect(screen.getByRole('cell', {  name: /endor/i})).toBeInTheDocument();
+      expect(screen.queryByText('yavin iv')).not.toBeInTheDocument();
     })
   });
+
+  test('Testa filtro de Coluna é atualizado após um filtro ser escolhido', async () => {
+    render(
+      <PlanetProvider>
+        <FiltersProvider>
+          <App />
+        </FiltersProvider>
+      </PlanetProvider>
+    );
+
+    const columnFilters = screen.getByTestId('column-filter');
+    expect(columnFilters.children).toHaveLength(5);
+    
+    const filterBtn = screen.getByRole('button', {  name: /filtrar/i})
+
+    act(() => {
+      userEvent.click(filterBtn)
+    });
+
+    await waitFor(() => {
+      expect(columnFilters.children).toHaveLength(4);
+    })
+
+
+  })
+
+  test('Testa se excluir um fitro atualiza novamente a tabela', async () => {
+    render(
+      <PlanetProvider>
+        <FiltersProvider>
+          <App />
+        </FiltersProvider>
+      </PlanetProvider>
+    );
+
+    const columnFilters = screen.getByRole('combobox', {  name: /coluna/i})
+    const comparisonFilter = screen.getByRole('combobox', {  name: /operador/i})
+    const valueFilter = screen.getByRole('spinbutton');
+    const filterBtn = screen.getByRole('button', {  name: /filtrar/i})
+    const tableCells = await screen.findAllByRole('cell');
+
+    expect(tableCells).toHaveLength(130);
+
+    act(() => {
+      userEvent.selectOptions(columnFilters, 'orbital_period');
+      userEvent.selectOptions(comparisonFilter, 'maior que');
+      userEvent.clear(valueFilter)
+      userEvent.type(valueFilter, 500);
+      userEvent.click(filterBtn)
+    })
+
+    await waitFor(() => {
+      const excludeFilterBtn = screen.getByRole('button', {  name: /excluir/i})
+      expect(excludeFilterBtn).toBeInTheDocument();
+      userEvent.click(excludeFilterBtn);
+      expect(screen.getAllByRole('cell')).toHaveLength(130);
+    })
+
+  })
+
+  test('Testa se o botão remove todos os filtros', async () => {
+    render(
+      <PlanetProvider>
+        <FiltersProvider>
+          <App />
+        </FiltersProvider>
+      </PlanetProvider>
+    );
+    const columnFilters = screen.getByRole('combobox', {  name: /coluna/i})
+    const comparisonFilter = screen.getByRole('combobox', {  name: /operador/i})
+    const valueFilter = screen.getByRole('spinbutton');
+    const filterBtn = screen.getByRole('button', {  name: /filtrar/i})
+
+    act(() => {
+      userEvent.selectOptions(columnFilters, 'orbital_period');
+      userEvent.selectOptions(comparisonFilter, 'maior que');
+      userEvent.clear(valueFilter)
+      userEvent.type(valueFilter, 500);
+      userEvent.click(filterBtn)
+
+      userEvent.selectOptions(columnFilters, 'rotation_period');
+      userEvent.selectOptions(comparisonFilter, 'maior que');
+      userEvent.clear(valueFilter)
+      userEvent.type(valueFilter, 20);
+      userEvent.click(filterBtn)
+
+      userEvent.selectOptions(columnFilters, 'rotation_period');
+      userEvent.selectOptions(comparisonFilter, 'menor que');
+      userEvent.clear(valueFilter)
+      userEvent.type(valueFilter, 8000);
+      userEvent.click(filterBtn)
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Hoth')).toBeInTheDocument();
+      expect(screen.getAllByRole('button', {  name: /excluir/i})).toHaveLength(3);
+    })
+
+    const removeAllFilters = screen.getByRole('button', {  name: /remover todas filtragens/i});
+    userEvent.click(removeAllFilters);
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('button', {  name: /excluir/i})).toHaveLength(0);
+    })
+
+    
+  })
 
 
 });

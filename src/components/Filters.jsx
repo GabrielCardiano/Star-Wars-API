@@ -128,6 +128,7 @@ function Filters() {
               <button
                 type="button"
                 onClick={ () => removeFilter(tag) }
+                data-testid="remove-filter"
               >
                 Excluir
               </button>

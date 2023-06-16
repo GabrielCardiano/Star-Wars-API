@@ -134,7 +134,7 @@ describe('Testa a aplicação Star Wars', () => {
       </PlanetProvider>
     );
 
-    expect(await screen.findByRole('cell', {  name: /yavin iv/i})).toBeInTheDocument();
+    expect(await screen.findByRole('cell', { name: /yavin iv/i })).toBeInTheDocument();
 
     const columnFilters = screen.getByRole('combobox', { name: /coluna/i })
     const comparisonFilter = screen.getByRole('combobox', { name: /operador/i })
@@ -150,7 +150,7 @@ describe('Testa a aplicação Star Wars', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByRole('cell', {  name: /yavin iv/i})).not.toBeInTheDocument();
+      expect(screen.queryByRole('cell', { name: /yavin iv/i })).not.toBeInTheDocument();
 
     })
 
@@ -165,7 +165,7 @@ describe('Testa a aplicação Star Wars', () => {
       </PlanetProvider>
     );
 
-    expect(await screen.findByRole('cell', {  name: /yavin iv/i})).toBeInTheDocument();
+    expect(await screen.findByRole('cell', { name: /yavin iv/i })).toBeInTheDocument();
 
     const columnFilters = screen.getByRole('combobox', { name: /coluna/i })
     const comparisonFilter = screen.getByRole('combobox', { name: /operador/i })
@@ -181,7 +181,7 @@ describe('Testa a aplicação Star Wars', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByRole('cell', {  name: /yavin iv/i})).not.toBeInTheDocument();
+      expect(screen.queryByRole('cell', { name: /yavin iv/i })).not.toBeInTheDocument();
     })
   });
 
@@ -237,8 +237,8 @@ describe('Testa a aplicação Star Wars', () => {
 
     await waitFor(() => {
       const removeFilterBtn = screen.getByTestId('remove-filter')
-      
-      expect(removeFilterBtn).toBeInTheDocument();     
+
+      expect(removeFilterBtn).toBeInTheDocument();
       userEvent.click(removeFilterBtn)
     })
 
@@ -288,9 +288,34 @@ describe('Testa a aplicação Star Wars', () => {
     await waitFor(() => {
       expect(screen.queryAllByRole('button', { name: /excluir/i })).toHaveLength(0);
     })
-
-
   })
 
+  test('Testa filtros de ordenação da tabela', async () => {
+    render(
+      <PlanetProvider>
+        <FiltersProvider>
+          <App />
+        </FiltersProvider>
+      </PlanetProvider>
+    );
 
+    const sortColumn = screen.getByRole('combobox', {  name: /ordenar/i});
+    expect(sortColumn).toBeInTheDocument();
+
+    const sortASC = screen.getByRole('radio', {  name: /ascendente/i});
+    expect(sortASC).toBeInTheDocument();
+
+    const sortBtn = screen.getByRole('button', {  name: /ordenar/i})
+
+    act(() => {
+      userEvent.selectOptions(sortColumn, 'surface_water')
+      userEvent.click(sortASC)
+    })
+
+    await waitFor(() => {
+      const tableCells = screen.getAllByTestId('planet-name');
+    })
+
+  })
+  
 });

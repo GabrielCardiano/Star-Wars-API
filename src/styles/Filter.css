@@ -46,6 +46,7 @@ select {
 .formButton {
   background-color: transparent;
   border: 3px solid yellow;
+  border-radius: 3px;
   font-size: 18px;
   padding: 10px;
 }

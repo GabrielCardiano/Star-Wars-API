@@ -15,11 +15,14 @@ const initialState = {
   valueFilter: 0,
 };
 
+const initialSort = { order: { column: 'population', sort: 'ASC' } };
+
 function FiltersProvider({ children }) {
   const [planetName, setPlanetName] = useState('');
   const [formFilters, setFormFilters] = useState(initialState);
   const [activeFilters, setActiveFilters] = useState([]);
   const [columnOptions, setColumnOptions] = useState(initialOptions);
+  const [sortFilters, setSortFilters] = useState(initialSort);
 
   const { setTableData, originalData } = useContext(PlanetContext);
 
@@ -37,9 +40,15 @@ function FiltersProvider({ children }) {
     case 'valueFilter':
       setFormFilters({ ...formFilters, valueFilter: target.value });
       break;
+    case 'columnSort':
+      setSortFilters({ order: { ...sortFilters.order, column: target.value } });
+      break;
+    case 'sortRadio':
+      setSortFilters({ order: { ...sortFilters.order, sort: target.value } });
+      break;
     default:
     }
-  }, [formFilters]);
+  }, [formFilters, sortFilters.order]);
 
   const saveActiveFilters = useCallback((filtersObj) => {
     setActiveFilters((prevFilters) => [...prevFilters, filtersObj]);
@@ -76,8 +85,6 @@ function FiltersProvider({ children }) {
   }, [setTableData]);
 
   const newTable = useCallback((originalTable, newFiltersArray) => {
-    // console.log(originalTable);
-    // console.log(newFiltersArray);
     let updatedTable = [...originalTable];
     newFiltersArray.forEach((filter) => {
       const { columnFilter, comparisonFilter, valueFilter } = filter;
@@ -114,6 +121,27 @@ function FiltersProvider({ children }) {
     newTable(originalData, []);
   }, [newTable, originalData]);
 
+  const sortTable = useCallback((table, filterObj) => {
+    const { order: { column, sort } } = filterObj;
+
+    console.log(table);
+
+    const unknownValues = table.filter((planet) => planet[column] === 'unknown');
+    const knownValues = table.filter((planet) => planet[column] !== 'unknown');
+
+    if (sort === 'ASC') {
+      const sortValues = knownValues.sort((a, b) => (
+        Number(a[column] - b[column])
+      ));
+      setTableData([...sortValues, ...unknownValues]);
+    } else if (sort === 'DESC') {
+      const sortValues = knownValues.sort((a, b) => (
+        Number(b[column] - a[column])
+      ));
+      setTableData([...sortValues, ...unknownValues]);
+    }
+  }, [setTableData]);
+
   const values = useMemo(() => ({
     planetName,
     setPlanetName,
@@ -127,6 +155,8 @@ function FiltersProvider({ children }) {
     removeColumnOptions,
     removeFilter,
     removeAllFilters,
+    sortFilters,
+    sortTable,
   }), [
     planetName,
     setPlanetName,
@@ -140,6 +170,8 @@ function FiltersProvider({ children }) {
     removeColumnOptions,
     removeFilter,
     removeAllFilters,
+    sortFilters,
+    sortTable,
   ]);
 
   return (
